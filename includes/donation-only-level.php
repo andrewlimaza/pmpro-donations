@@ -12,13 +12,12 @@
 function pmprodon_pmpro_checkout_before_change_membership_level( $user_id, $morder ) {
 	global $pmprodon_existing_member_flag, $pmpro_level;
 
-	if ( pmpro_hasMembershipLevel()
-	&& pmpro_is_checkout()
-	&& ! empty( $pmpro_level )
-	&& pmprodon_is_donations_only( $pmpro_level->id ) ) {
-		add_filter( 'pmpro_cancel_previous_subscriptions', '__return_false' );
-		add_filter( 'pmpro_deactivate_old_levels', '__return_false' );
-		$pmprodon_existing_member_flag = true;
+	if ( ! empty( $pmpro_level ) && pmprodon_is_donations_only( $pmpro_level->id ) ) {
+		if ( pmpro_hasMembershipLevel() ) {
+			add_filter( 'pmpro_cancel_previous_subscriptions', '__return_false' );
+			add_filter( 'pmpro_deactivate_old_levels', '__return_false' );
+		}
+		$pmprodon_existing_member_flag = true; // This is really used as a flag to remove the level when it's a donations level to remove the level after checkout.
 	}
 }
 add_action( 'pmpro_checkout_before_change_membership_level', 'pmprodon_pmpro_checkout_before_change_membership_level', 1, 2 );
